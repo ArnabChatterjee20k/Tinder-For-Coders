@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState ,useMemo} from "react";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import {
@@ -78,14 +78,18 @@ export function AuthProvider({ children }) {
     }
   }
 
+  // uncache or change the value when values in the dependency array changes
+  const values = useMemo(()=>{
+    return {
+      user,
+      signInWithGoogle,
+      loading,
+      logOut
+    }
+  },[user,loading,error])
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        signInWithGoogle,
-        loading,
-        logOut
-      }}
+      value={values}
     >
       {!loadingInitial && children}
     </AuthContext.Provider>
