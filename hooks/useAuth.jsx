@@ -8,11 +8,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { auth } from "../firebase";
-
-EXPO_CLIENT_ID =
-  "";
-ANDROID_CLIENT_ID =
-  "";
+import { EXPO_CLIENT_ID ,ANDROID_CLIENT_ID} from "../env";
 
 const AuthContext = createContext();
 
@@ -29,7 +25,6 @@ export function AuthProvider({ children }) {
       if (user) {
         // logged in
         setUser(user);
-        console.log({ user });
       } else {
         // not logged in
         setUser(null);
@@ -59,7 +54,7 @@ export function AuthProvider({ children }) {
 
         return result;
       }
-      return Promise.reject();
+      // return Promise.reject();
     } catch (error) {
       setError(error);
     } finally {
@@ -83,10 +78,11 @@ export function AuthProvider({ children }) {
     return {
       user,
       signInWithGoogle,
+      request,
       loading,
       logOut
     }
-  },[user,loading,error])
+  },[user,loading,error,promptAsync])
   return (
     <AuthContext.Provider
       value={values}
