@@ -4,10 +4,12 @@ import Home from "./screens/Home";
 import Chat from "./screens/Chat";
 import Login from "./screens/Login";
 import { useAuth } from "./hooks/useAuth";
-
+import localStorage from "./utils/localStorage";
 const Stack = createNativeStackNavigator();
 export default function StackNav() {
   const {user} = useAuth()
+  // localStorage.getUser().then(data=>console.log(data))
+  // console.log({user})
   return (
     <Stack.Navigator>
       {user ? (

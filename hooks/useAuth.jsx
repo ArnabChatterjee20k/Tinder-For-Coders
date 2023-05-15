@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState ,useMemo} from "react";
+import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import {
@@ -8,7 +8,8 @@ import {
   signOut,
 } from "firebase/auth";
 import { auth } from "../firebase";
-import { EXPO_CLIENT_ID ,ANDROID_CLIENT_ID} from "../env";
+import { EXPO_CLIENT_ID, ANDROID_CLIENT_ID } from "../env";
+import localStorage from "../utils/localStorage";
 
 const AuthContext = createContext();
 
@@ -32,8 +33,28 @@ export function AuthProvider({ children }) {
 
       setLoadingInitial(false);
     });
+
+    checkUserPersists();
   }, []);
 
+  // RETRIEVING USER FROM LOCAL STORAGE
+  async function checkUserPersists() {
+    setLoading(true);
+    const data = await localStorage.getUser();
+    console.log({data})
+    try {
+      if (data) {
+        setUser(data);
+      }
+      // return Promise.reject();
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // GOOGLE AUTH PROCESS
   WebBrowser.maybeCompleteAuthSession();
   const [request, response, promptAsync] = Google.useAuthRequest({
     expoClientId: EXPO_CLIENT_ID,
@@ -51,7 +72,7 @@ export function AuthProvider({ children }) {
           authentication.accessToken
         );
         const result = await signInWithCredential(auth, credential);
-
+        await localStorage.storeUser(result);
         return result;
       }
       // return Promise.reject();
@@ -74,19 +95,17 @@ export function AuthProvider({ children }) {
   }
 
   // uncache or change the value when values in the dependency array changes
-  const values = useMemo(()=>{
+  const values = useMemo(() => {
     return {
       user,
       signInWithGoogle,
       request,
       loading,
-      logOut
-    }
-  },[user,loading,error,promptAsync])
+      logOut,
+    };
+  }, [user, loading, error, promptAsync]);
   return (
-    <AuthContext.Provider
-      value={values}
-    >
+    <AuthContext.Provider value={values}>
       {!loadingInitial && children}
     </AuthContext.Provider>
   );
