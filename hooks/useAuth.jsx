@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [loading, setLoading] = useState(false);
-
+  console.log(auth.currentUser)
   useEffect(() => {
     // as it is returning unsubscribe so it will be automatically unsubscribed
     // it will listen for all the auth events
