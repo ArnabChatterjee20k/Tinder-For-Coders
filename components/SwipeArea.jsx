@@ -9,6 +9,7 @@ export default function SwipeArea() {
     <View>
       <Swiper
         cards={duumyData}
+        verticalSwipe={false}
         renderCard={(card, index) => <ProfileCard key={index} {...card} />}
         stackSize={3}
         cardIndex={0}
